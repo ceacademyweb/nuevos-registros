@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 2em;
+      font-family: sans-serif;
+    }
+
+  </style>
+</head>
+
+<body>
+
+
+  <div id="container"></div>
+  <script>
+    const fragment = new DocumentFragment();
+    axios.get('https://ceacademy-auth-production.up.railway.app/admin/users/nuevos')
+      .then(res => {
+        const data = res.data.result
+        console.log(data)
+        data.forEach((el, i) => {
+          const list = document.createElement('div')
+          list.style.marginBottom = '50px'
+          list.innerHTML = `
+            <p>${el._id}</p>
+            <p><span>Nombre: </span>${el.name} ${el.lastName}</p >
+            <p><span>email: </span>${el.email}</p >
+            <p><span>código: </span>${el.codeMember}</p >
+            <p><span>telegram: </span>${el.telegramId}</p >
+            <p><span>discord: </span>${el.discordId}</p >
+            <button data-id="${el._id}">Activar</button>
+          `
+          fragment.appendChild(list)
+
+        });
+        document.getElementById('container').appendChild(fragment)
+        let buttons = document.querySelectorAll('button')
+        buttons.forEach((button, i) => {
+          button.addEventListener('click', (e) => {
+            let id = e.target.dataset.id
+            console.log(id)
+            axios.get(`https://ceacademy-auth-production.up.railway.app/admin/auth/${id}`)
+              .then(res => {
+                console.log(res.data)
+                e.target.parentElement.remove()
+              })
+          })
+        })
+      })
+  </script>
+</body>
+
+</html>
